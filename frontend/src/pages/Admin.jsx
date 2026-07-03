@@ -324,7 +324,7 @@ function Admin({ showToast }) {
       <div className="admin-header">
         <div>
           <h1 style={{ fontSize: '2rem' }}>Admin Dashboard</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Welcome to CalcioClub management console.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Welcome to CalsioClub management console.</p>
         </div>
         
         <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '0.6rem 1rem' }}>

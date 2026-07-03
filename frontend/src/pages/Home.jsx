@@ -50,7 +50,7 @@ function Home() {
     <div>
       {/* Hero Section */}
       <section className="hero">
-        <h1>CalcioClub</h1>
+        <h1>CalsioClub</h1>
         <p>
           Discover premium quality, authentic retro and current-season jerseys.
           Find your club, represent your national squad, and wear the passion.

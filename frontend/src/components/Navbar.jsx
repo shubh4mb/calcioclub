@@ -15,7 +15,7 @@ function Navbar({ theme, toggleTheme, cartCount }) {
     <nav className="navbar">
       <div className="navbar-container">
         <Link to="/" className="logo">
-          <img src={logoImg} alt="CalcioClub Logo" style={{ height: '32px', width: 'auto' }} />
+          <img src={logoImg} alt="CalsioClub Logo" style={{ height: '32px', width: 'auto' }} />
         </Link>
 
         {/* Desktop Links */}
@@ -56,7 +56,7 @@ function Navbar({ theme, toggleTheme, cartCount }) {
       <div className={`mobile-menu-drawer ${isMenuOpen ? 'open' : ''}`}>
         <div className="mobile-drawer-header">
           <Link to="/" className="logo" onClick={() => setIsMenuOpen(false)}>
-            <img src={logoImg} alt="CalcioClub Logo" style={{ height: '28px', width: 'auto' }} />
+            <img src={logoImg} alt="CalsioClub Logo" style={{ height: '28px', width: 'auto' }} />
           </Link>
           <button
             className="close-drawer"

@@ -80,7 +80,7 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
         <CheckCircle size={64} style={{ color: 'var(--success)', marginBottom: '1.5rem' }} />
         <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Order Placed Successfully!</h2>
         <p style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>
-          Thank you for shopping at CalcioClub. Your booking has been recorded.
+          Thank you for shopping at CalsioClub. Your booking has been recorded.
         </p>
         
         <div 
