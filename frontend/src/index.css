@@ -154,6 +154,7 @@ a {
   border: none;
   outline: none;
   letter-spacing: -0.01em;
+  touch-action: manipulation;
 }
 
 .btn-primary {
@@ -161,9 +162,11 @@ a {
   color: #ffffff;
 }
 
-.btn-primary:hover {
-  background-color: var(--accent-hover);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+  }
 }
 
 .btn-primary:active {
@@ -176,8 +179,10 @@ a {
   border: 1px solid var(--card-border);
 }
 
-.btn-secondary:hover {
-  background-color: var(--input-border);
+@media (hover: hover) {
+  .btn-secondary:hover {
+    background-color: var(--input-border);
+  }
 }
 
 .btn-danger {
@@ -185,8 +190,10 @@ a {
   color: #ffffff;
 }
 
-.btn-danger:hover {
-  opacity: 0.9;
+@media (hover: hover) {
+  .btn-danger:hover {
+    opacity: 0.9;
+  }
 }
 
 .btn-icon {
@@ -613,10 +620,13 @@ a {
   font-size: 0.85rem;
   cursor: pointer;
   transition: var(--transition);
+  touch-action: manipulation;
 }
 
-.size-btn:hover {
-  border-color: var(--text-primary);
+@media (hover: hover) {
+  .size-btn:hover {
+    border-color: var(--text-primary);
+  }
 }
 
 .size-btn.active {
@@ -646,10 +656,13 @@ a {
   align-items: center;
   justify-content: center;
   transition: var(--transition);
+  touch-action: manipulation;
 }
 
-.qty-btn:hover {
-  border-color: var(--text-primary);
+@media (hover: hover) {
+  .qty-btn:hover {
+    border-color: var(--text-primary);
+  }
 }
 
 .qty-value {
@@ -861,9 +874,11 @@ a {
   transition: var(--transition);
 }
 
-.admin-tab-btn:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-secondary);
+@media (hover: hover) {
+  .admin-tab-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+  }
 }
 
 .admin-tab-btn.active {
@@ -962,7 +977,7 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  max-height: 90dvh;
 }
 
 .modal-header {
