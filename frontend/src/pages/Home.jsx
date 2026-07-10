@@ -133,7 +133,7 @@ function Home() {
                 )}
 
                 <div className="jersey-card-footer">
-                  <span className="jersey-card-price">${jersey.price.toFixed(2)}</span>
+                  <span className="jersey-card-price">₹{jersey.price.toFixed(2)}</span>
                 </div>
               </div>
             </Link>

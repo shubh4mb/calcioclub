@@ -433,7 +433,7 @@ function Admin({ showToast }) {
                         <h4>{jersey.name}</h4>
                         <div>
                           <span>Category: <strong>{jersey.category}</strong></span>
-                          <span>Price: <strong style={{ color: 'var(--accent)' }}>${jersey.price.toFixed(2)}</strong></span>
+                          <span>Price: <strong style={{ color: 'var(--accent)' }}>₹{jersey.price.toFixed(2)}</strong></span>
                           <span>Stock: <strong style={{ color: jersey.inStock ? 'var(--success)' : 'var(--danger)' }}>{jersey.inStock ? 'In Stock' : 'Out of Stock'}</strong></span>
                         </div>
                         <div style={{ marginTop: '0.25rem' }}>
@@ -552,7 +552,7 @@ function Admin({ showToast }) {
                                 <li key={index} style={{ marginBottom: '0.35rem' }}>
                                   <strong>{item.jerseyName}</strong>
                                   <span style={{ color: 'var(--text-secondary)' }}>
-                                    {' '}(Size: {item.size}) x {item.quantity} - ${item.price.toFixed(2)}/ea
+                                    {' '}(Size: {item.size}) x {item.quantity} - ₹{item.price.toFixed(2)}/ea
                                   </span>
                                 </li>
                               ))}
@@ -560,7 +560,7 @@ function Admin({ showToast }) {
                           </td>
                           
                           <td style={{ verticalAlign: 'top', fontWeight: 800, color: 'var(--accent)' }}>
-                            ${order.totalAmount.toFixed(2)}
+                            ₹{order.totalAmount.toFixed(2)}
                           </td>
                           
                           <td style={{ verticalAlign: 'top' }}>
@@ -680,7 +680,7 @@ function Admin({ showToast }) {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="form-group">
-                    <label htmlFor="modal-price">Price ($)</label>
+                    <label htmlFor="modal-price">Price (₹)</label>
                     <input
                       type="number"
                       id="modal-price"

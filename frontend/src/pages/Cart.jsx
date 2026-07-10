@@ -100,7 +100,7 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
             <strong>Customer:</strong> {createdOrder.customerDetails.name}
           </div>
           <div style={{ marginBottom: '0.5rem' }}>
-            <strong>Total Amount:</strong> <span style={{ color: 'var(--accent)', fontWeight: 800 }}>${createdOrder.totalAmount.toFixed(2)}</span>
+            <strong>Total Amount:</strong> <span style={{ color: 'var(--accent)', fontWeight: 800 }}>₹{createdOrder.totalAmount.toFixed(2)}</span>
           </div>
           <div>
             <strong>Status:</strong> <span className={`status-badge ${createdOrder.status}`}>{createdOrder.status}</span>
@@ -149,7 +149,7 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
               <div className="cart-item-details">
                 <h3 className="cart-item-name">{item.jerseyName}</h3>
                 <div className="cart-item-meta">Size: {item.size}</div>
-                <div className="cart-item-price">${item.price.toFixed(2)}</div>
+                <div className="cart-item-price">₹{item.price.toFixed(2)}</div>
               </div>
 
               {/* Quantity Controls */}
@@ -193,7 +193,7 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
           {/* Pricing summary */}
           <div className="checkout-row">
             <span>Items Subtotal</span>
-            <span>${calculateTotal().toFixed(2)}</span>
+            <span>₹{calculateTotal().toFixed(2)}</span>
           </div>
           <div className="checkout-row">
             <span>Shipping</span>
@@ -201,7 +201,7 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
           </div>
           <div className="checkout-row total">
             <span>Total Amount</span>
-            <span className="price">${calculateTotal().toFixed(2)}</span>
+            <span className="price">₹{calculateTotal().toFixed(2)}</span>
           </div>
 
           {/* Customer Booking Form */}

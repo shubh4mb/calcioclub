@@ -128,7 +128,7 @@ function ProductDetail({ addToCart }) {
         <div className="detail-info-panel">
           <span className="detail-category">{jersey.category}</span>
           <h1 className="detail-title">{jersey.name}</h1>
-          <div className="detail-price">${jersey.price.toFixed(2)}</div>
+          <div className="detail-price">₹{jersey.price.toFixed(2)}</div>
           
           {jersey.description && (
             <p className="detail-desc">{jersey.description}</p>
