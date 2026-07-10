@@ -212,6 +212,44 @@ function Admin({ showToast }) {
     });
   };
 
+  // Compress image before upload to avoid payload size limits
+  const compressImage = (file, maxWidth = 1200, quality = 0.8) => {
+    return new Promise((resolve) => {
+      if (!file || !file.type.startsWith('image/')) return resolve(file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            if (!blob) return resolve(file);
+            resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            }));
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = () => resolve(file);
+      };
+      reader.onerror = () => resolve(file);
+    });
+  };
+
   // Handle Add/Edit Form submission
   const handleSaveJersey = async (e) => {
     e.preventDefault();
@@ -238,7 +276,9 @@ function Admin({ showToast }) {
       formData.append('sizes', JSON.stringify(jerseyForm.sizes));
 
       if (imageType === 'upload' && selectedFile) {
-        formData.append('imageFile', selectedFile);
+        showToast('Compressing image...', 'info');
+        const compressedFile = await compressImage(selectedFile);
+        formData.append('imageFile', compressedFile);
       } else if (imageType === 'url' && jerseyForm.imageUrl) {
         formData.append('imageUrl', jerseyForm.imageUrl);
       } else if (editingJersey) {
@@ -260,7 +300,8 @@ function Admin({ showToast }) {
       // Append additional uploaded files
       if (imageType === 'upload' && selectedFiles && selectedFiles.length > 0) {
         for (let i = 0; i < selectedFiles.length; i++) {
-          formData.append('imageFiles', selectedFiles[i]);
+          const compressedFile = await compressImage(selectedFiles[i]);
+          formData.append('imageFiles', compressedFile);
         }
       }
 
@@ -277,10 +318,18 @@ function Admin({ showToast }) {
         body: formData
       });
 
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        // If response is not JSON (e.g. 502 HTML from proxy)
+        if (!response.ok) {
+          throw new Error(`Server Error (${response.status}): The request may have timed out or the file is too large.`);
+        }
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to save jersey');
+        throw new Error(data.message || `Failed to save jersey (${response.status})`);
       }
 
       showToast(editingJersey ? 'Jersey updated successfully!' : 'Jersey added successfully!');
