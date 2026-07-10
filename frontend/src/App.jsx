@@ -6,8 +6,34 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin';
+import Lenis from 'lenis';
 
 function App() {
+  // Initialize Lenis for premium smooth scrolling
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.6,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+    });
+
+    window.lenis = lenis;
+
+    let rafId;
+    function raf(time) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      window.lenis = null;
+      lenis.destroy();
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
   // Theme state: default to 'dark' for premium sports look
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'dark';

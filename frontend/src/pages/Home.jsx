@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Shirt, Loader2, ShoppingCart } from 'lucide-react';
+import bannerImg from '../assets/banner.png';
 
 function Home() {
   const [jerseys, setJerseys] = useState([]);
@@ -49,44 +50,39 @@ function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="hero">
-        <h1>CalsioClub</h1>
-        <p>
-          Discover premium quality, authentic retro and current-season jerseys.
-          Find your club, represent your national squad, and wear the passion.
-        </p>
-      </section>
-
-      {/* Filter and Search Controls */}
-      <section className="controls-section">
-        <div className="search-box">
-          <Search size={18} />
-          <input
-            type="text"
-            placeholder="Search jersey, club, national squad..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+      <section className="hero" style={{ backgroundImage: `url(${bannerImg})` }}>
+        <div className="hero-overlay"></div>
+        <div className="hero-content">
+          <h1>CalsioClub</h1>
+          <p>
+            Discover premium quality, authentic retro and current-season jerseys.
+            Find your club, represent your national squad, and wear the passion.
+          </p>
         </div>
-
-        {categories.length > 1 && (
-          <div className="categories-container">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className={`category-btn ${selectedCategory === category ? 'active' : ''
-                  }`}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        )}
+        <button 
+          onClick={() => {
+            if (window.lenis) {
+              window.lenis.scrollTo('#products-section', { offset: -100 });
+            } else {
+              document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' });
+            }
+          }} 
+          className="hero-scroll-btn"
+          aria-label="Scroll to products"
+        >
+          Shop Now
+        </button>
       </section>
+
+
 
       {/* Main Jerseys Listing */}
-      {loading ? (
+      <div id="products-section" style={{ scrollMarginTop: '100px' }}>
+        <div className="section-header">
+          <h2>Latest Collection</h2>
+          {/* <span className="section-subtitle">Curated premium retro & football jerseys</span> */}
+        </div>
+        {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '6rem 0' }}>
           <Loader2 size={40} className="spinner" style={{ animation: 'spin 1s linear infinite', color: 'var(--accent)' }} />
           <style>{`
@@ -116,7 +112,6 @@ function Home() {
             <Link key={jersey._id} to={`/product/${jersey._id}`} className="jersey-card">
               <div className="jersey-card-image">
                 <img src={jersey.image} alt={jersey.name} loading="lazy" />
-                <span className="jersey-card-badge">{jersey.category}</span>
               </div>
 
               <div className="jersey-card-content">
@@ -140,6 +135,7 @@ function Home() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

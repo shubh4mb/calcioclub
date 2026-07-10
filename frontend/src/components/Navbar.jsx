@@ -1,35 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Sun, Moon, ShieldAlert, Shirt, Menu, X } from 'lucide-react';
+import { ShoppingCart, Sun, Moon, ShieldAlert, Shirt, Menu, X, Instagram } from 'lucide-react';
 import logoImg from '../assets/logo.PNG';
 
 function Navbar({ theme, toggleTheme, cartCount }) {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
   };
 
+  const isHome = location.pathname === '/';
+
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isHome ? 'navbar-transparent' : ''} ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
         <Link to="/" className="logo">
           <img src={logoImg} alt="CalsioClub Logo" style={{ height: '32px', width: 'auto' }} />
         </Link>
 
-        {/* Desktop Links */}
         <div className="nav-links">
-          <Link to="/" className={`nav-link ${isActive('/')}`}>
-            Shop
-          </Link>
-
-
-
           <Link to="/cart" className="cart-icon-container nav-link">
-            <ShoppingBag size={22} />
+            <ShoppingCart size={22} />
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </Link>
+
+          <a 
+            href="https://www.instagram.com/calsioclub?igsh=cGg2c2QybW1rOXY5" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="nav-link"
+            aria-label="Instagram"
+            style={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Instagram size={20} />
+          </a>
 
           <button
             onClick={toggleTheme}
@@ -69,26 +88,29 @@ function Navbar({ theme, toggleTheme, cartCount }) {
 
         <div className="mobile-nav-links">
           <Link
-            to="/"
-            className={`mobile-nav-link ${isActive('/')}`}
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Shop
-          </Link>
-
-
-
-          <Link
             to="/cart"
             className={`mobile-nav-link mobile-cart-link ${isActive('/cart')}`}
             onClick={() => setIsMenuOpen(false)}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <ShoppingBag size={20} />
+              <ShoppingCart size={20} />
               <span>Cart</span>
             </div>
             {cartCount > 0 && <span className="mobile-cart-badge">{cartCount}</span>}
           </Link>
+
+          <a
+            href="https://www.instagram.com/calsioclub?igsh=cGg2c2QybW1rOXY5"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mobile-nav-link"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <Instagram size={20} />
+              <span>Instagram</span>
+            </div>
+          </a>
 
           <div className="mobile-drawer-footer">
             <span className="mobile-footer-label">Theme Mode</span>
