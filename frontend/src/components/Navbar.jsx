@@ -30,7 +30,17 @@ function Navbar({ theme, toggleTheme, cartCount }) {
     <nav className={`navbar ${isHome ? 'navbar-transparent' : ''} ${isScrolled ? 'scrolled' : ''}`}>
       <div className="navbar-container">
         <Link to="/" className="logo">
-          <img src={logoImg} alt="CalsioClub Logo" style={{ height: '32px', width: 'auto' }} />
+          <img 
+            src={logoImg} 
+            alt="CalsioClub Logo" 
+            style={{ 
+              height: '44px', 
+              width: 'auto',
+              // Invert the white logo to black if theme is light, EXCEPT when over the dark hero banner
+              filter: theme === 'light' && (!isHome || isScrolled) ? 'invert(1)' : 'none',
+              transition: 'filter 0.3s ease'
+            }} 
+          />
         </Link>
 
         <div className="nav-links">
@@ -75,7 +85,16 @@ function Navbar({ theme, toggleTheme, cartCount }) {
       <div className={`mobile-menu-drawer ${isMenuOpen ? 'open' : ''}`}>
         <div className="mobile-drawer-header">
           <Link to="/" className="logo" onClick={() => setIsMenuOpen(false)}>
-            <img src={logoImg} alt="CalsioClub Logo" style={{ height: '28px', width: 'auto' }} />
+            <img 
+              src={logoImg} 
+              alt="CalsioClub Logo" 
+              style={{ 
+                height: '40px', 
+                width: 'auto',
+                filter: theme === 'light' ? 'invert(1)' : 'none',
+                transition: 'filter 0.3s ease'
+              }} 
+            />
           </Link>
           <button
             className="close-drawer"

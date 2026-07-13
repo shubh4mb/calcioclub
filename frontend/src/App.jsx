@@ -36,7 +36,7 @@ function App() {
   }, []);
   // Theme state: default to 'dark' for premium sports look
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'dark';
+    return localStorage.getItem('theme') || 'light';
   });
 
   // Cart state

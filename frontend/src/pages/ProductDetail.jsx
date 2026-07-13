@@ -81,47 +81,44 @@ function ProductDetail({ addToCart }) {
 
   return (
     <div>
-      {/* Back Button */}
+      {/* Mobile Back Button */}
       <button 
         onClick={() => navigate('/')} 
-        className="btn btn-secondary" 
-        style={{ marginBottom: '2rem', padding: '0.5rem 1rem' }}
+        className="btn btn-secondary back-btn-mobile" 
       >
         <ArrowLeft size={16} /> Back to Shop
       </button>
 
       <div className="detail-container">
         {/* Left Side: Image & Gallery */}
-        <div>
-          <div className="detail-image-panel">
-            <img src={activeImage} alt={jersey.name} />
-          </div>
-          
+        <div className="detail-gallery-wrapper">
+          {/* Desktop Back Button (Left of Thumbnails) */}
+          <button 
+            onClick={() => navigate('/')} 
+            className="btn btn-icon back-btn-desktop" 
+            title="Back to Shop"
+          >
+            <ArrowLeft size={24} />
+          </button>
+
           {/* Thumbnail Gallery */}
           {jersey && jersey.images && [jersey.image, ...jersey.images].filter(Boolean).length > 1 && (
-            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+            <div className="detail-thumbnails">
               {[jersey.image, ...jersey.images].filter(Boolean).map((imgUrl, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(imgUrl)}
-                  style={{
-                    width: '70px',
-                    height: '85px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: activeImage === imgUrl ? '2px solid var(--text-primary)' : '1px solid var(--card-border)',
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    padding: 0,
-                    backgroundColor: 'var(--bg-secondary)',
-                    flexShrink: 0,
-                    transition: 'var(--transition)'
-                  }}
+                  className={`thumbnail-btn ${activeImage === imgUrl ? 'active' : ''}`}
                 >
-                  <img src={imgUrl} alt={`${jersey.name} view ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={imgUrl} alt={`${jersey.name} view ${idx + 1}`} loading="lazy" />
                 </button>
               ))}
             </div>
           )}
+
+          <div className="detail-image-panel">
+            <img src={activeImage} alt={jersey.name} />
+          </div>
         </div>
 
         {/* Right Side: Details & Actions */}
@@ -172,9 +169,9 @@ function ProductDetail({ addToCart }) {
               <button 
                 onClick={handleAddToCart} 
                 className="btn btn-primary" 
-                style={{ flexGrow: 1, padding: '1rem 2rem' }}
+                style={{ flexGrow: 1, padding: '0.65rem 1.5rem' }}
               >
-                <ShoppingCart size={20} /> Add to Cart
+                <ShoppingCart size={18} /> Add to Cart
               </button>
             ) : (
               <button 
@@ -185,7 +182,7 @@ function ProductDetail({ addToCart }) {
                   backgroundColor: 'var(--input-border)', 
                   color: 'var(--text-secondary)',
                   cursor: 'not-allowed',
-                  padding: '1rem 2rem'
+                  padding: '0.65rem 1.5rem'
                 }}
               >
                 Out of Stock
