@@ -1683,7 +1683,7 @@ a {
   }
 
   .jersey-card {
-    border-radius: 0;
+    border-radius: var(--radius-lg);
     overflow: hidden;
   }
 
@@ -2166,7 +2166,7 @@ a {
   }
 
   .jersey-card {
-    border-radius: 0;
+    border-radius: var(--radius-md);
   }
 
   .jersey-card-image {
