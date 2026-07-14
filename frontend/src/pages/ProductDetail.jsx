@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Loader2, Minus, Plus } from 'lucide-react';
 
@@ -8,10 +8,33 @@ function ProductDetail({ addToCart }) {
   const [jersey, setJersey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
+  const scrollRef = useRef(null);
+
+  const allImages = jersey ? [jersey.image, ...(jersey.images || [])].filter(Boolean) : [];
+
+  const handleThumbnailClick = (imgUrl, idx) => {
+    setActiveImage(imgUrl);
+    if (scrollRef.current) {
+      const child = scrollRef.current.children[idx];
+      if (child) {
+        child.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+      }
+    }
+  };
+
+  const handleScroll = (e) => {
+    const container = e.target;
+    const scrollLeft = container.scrollLeft;
+    const width = container.clientWidth;
+    const index = Math.round(scrollLeft / width);
+    if (allImages[index] && allImages[index] !== activeImage) {
+      setActiveImage(allImages[index]);
+    }
+  };
 
   useEffect(() => {
     if (jersey) {
@@ -82,9 +105,9 @@ function ProductDetail({ addToCart }) {
   return (
     <div>
       {/* Mobile Back Button */}
-      <button 
-        onClick={() => navigate('/')} 
-        className="btn btn-secondary back-btn-mobile" 
+      <button
+        onClick={() => navigate('/')}
+        className="btn btn-secondary back-btn-mobile"
       >
         <ArrowLeft size={16} /> Back to Shop
       </button>
@@ -93,21 +116,59 @@ function ProductDetail({ addToCart }) {
         {/* Left Side: Image & Gallery */}
         <div className="detail-gallery-wrapper">
           {/* Desktop Back Button (Left of Thumbnails) */}
-          <button 
-            onClick={() => navigate('/')} 
-            className="btn btn-icon back-btn-desktop" 
+          <button
+            onClick={() => navigate('/')}
+            className="btn btn-icon back-btn-desktop"
             title="Back to Shop"
           >
             <ArrowLeft size={24} />
           </button>
 
+          {/* Main Image */}
+          <div
+            className="detail-image-panel"
+            ref={scrollRef}
+            onScroll={handleScroll}
+            style={{
+              aspectRatio: '4 / 5',
+              display: 'flex',
+              overflowX: 'auto',
+              scrollSnapType: 'x mandatory',
+              scrollBehavior: 'smooth',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}
+          >
+            {allImages.length > 0 ? allImages.map((imgUrl, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: 'relative',
+                  flex: '0 0 100%',
+                  height: '100%',
+                  scrollSnapAlign: 'start'
+                }}
+              >
+                <img
+                  src={imgUrl}
+                  alt={`${jersey.name} view ${idx + 1}`}
+                />
+              </div>
+            )) : (
+              <div style={{ position: 'relative', flex: '0 0 100%', height: '100%' }}>
+                <img src={activeImage} alt={jersey.name} />
+              </div>
+            )}
+          </div>
+
           {/* Thumbnail Gallery */}
-          {jersey && jersey.images && [jersey.image, ...jersey.images].filter(Boolean).length > 1 && (
+          {allImages.length > 1 && (
             <div className="detail-thumbnails">
-              {[jersey.image, ...jersey.images].filter(Boolean).map((imgUrl, idx) => (
+              {allImages.map((imgUrl, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setActiveImage(imgUrl)}
+                  onClick={() => handleThumbnailClick(imgUrl, idx)}
                   className={`thumbnail-btn ${activeImage === imgUrl ? 'active' : ''}`}
                 >
                   <img src={imgUrl} alt={`${jersey.name} view ${idx + 1}`} loading="lazy" />
@@ -115,10 +176,6 @@ function ProductDetail({ addToCart }) {
               ))}
             </div>
           )}
-
-          <div className="detail-image-panel">
-            <img src={activeImage} alt={jersey.name} />
-          </div>
         </div>
 
         {/* Right Side: Details & Actions */}
@@ -126,7 +183,7 @@ function ProductDetail({ addToCart }) {
           <span className="detail-category">{jersey.category}</span>
           <h1 className="detail-title">{jersey.name}</h1>
           <div className="detail-price">₹{jersey.price.toFixed(2)}</div>
-          
+
           {jersey.description && (
             <p className="detail-desc">{jersey.description}</p>
           )}
@@ -166,20 +223,20 @@ function ProductDetail({ addToCart }) {
           {/* Add to Cart Actions */}
           <div style={{ display: 'flex', gap: '1rem' }}>
             {jersey.inStock ? (
-              <button 
-                onClick={handleAddToCart} 
-                className="btn btn-primary" 
+              <button
+                onClick={handleAddToCart}
+                className="btn btn-primary"
                 style={{ flexGrow: 1, padding: '0.65rem 1.5rem' }}
               >
                 <ShoppingCart size={18} /> Add to Cart
               </button>
             ) : (
-              <button 
-                className="btn" 
-                disabled 
-                style={{ 
-                  flexGrow: 1, 
-                  backgroundColor: 'var(--input-border)', 
+              <button
+                className="btn"
+                disabled
+                style={{
+                  flexGrow: 1,
+                  backgroundColor: 'var(--input-border)',
                   color: 'var(--text-secondary)',
                   cursor: 'not-allowed',
                   padding: '0.65rem 1.5rem'

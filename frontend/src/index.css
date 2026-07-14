@@ -509,7 +509,7 @@ a {
 .jersey-card {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   transition: var(--transition);
   display: flex;
@@ -525,12 +525,17 @@ a {
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 5;
+  height: auto;
+  flex-shrink: 0;
   overflow: hidden;
   background-color: var(--bg-secondary);
   border-radius: 0;
 }
 
 .jersey-card-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -623,19 +628,33 @@ a {
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  position: relative;
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
   aspect-ratio: 4 / 5;
 }
 
+/* Fallback for browsers that ignore aspect-ratio */
+@supports not (aspect-ratio: 4 / 5) {
+  .detail-image-panel {
+    height: 0;
+    padding-bottom: 125%;
+  }
+}
+
 .detail-image-panel img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.detail-image-panel::-webkit-scrollbar {
+  display: none;
 }
 
 /* Back Button Responsiveness */
@@ -649,11 +668,13 @@ a {
   display: none;
 }
 
-/* Image Gallery Layout */
+/* Image Gallery Layout — block on mobile to preserve aspect-ratio */
 .detail-gallery-wrapper {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 1rem;
+  display: block;
+}
+
+.detail-gallery-wrapper .detail-image-panel {
+  margin-bottom: 1rem;
 }
 
 .detail-thumbnails {
@@ -661,23 +682,34 @@ a {
   gap: 0.75rem;
   overflow-x: auto;
   padding-bottom: 0.5rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.detail-thumbnails::-webkit-scrollbar {
+  display: none;
 }
 
 .thumbnail-btn {
   width: 70px;
   height: 85px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--card-border);
+  border: none;
   overflow: hidden;
   cursor: pointer;
   padding: 0;
   background-color: var(--bg-secondary);
   flex-shrink: 0;
-  transition: var(--transition);
+  transition: opacity 0.3s ease;
+  opacity: 0.5;
+}
+
+.thumbnail-btn:hover {
+  opacity: 0.8;
 }
 
 .thumbnail-btn.active {
-  border: 2px solid var(--text-primary);
+  opacity: 1;
 }
 
 .thumbnail-btn img {
@@ -690,7 +722,7 @@ a {
   main {
     padding: 6rem 3rem 2.5rem;
   }
-  
+
   .detail-container {
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
@@ -700,7 +732,7 @@ a {
   .back-btn-mobile {
     display: none;
   }
-  
+
   .back-btn-desktop {
     display: flex;
     align-self: flex-start;
@@ -708,15 +740,27 @@ a {
   }
 
   .detail-gallery-wrapper {
+    display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
+    gap: 1rem;
   }
-  
-  .detail-image-panel {
+
+  .detail-gallery-wrapper .back-btn-desktop {
+    order: 1;
+  }
+
+  .detail-gallery-wrapper .detail-thumbnails {
+    order: 2;
+  }
+
+  .detail-gallery-wrapper .detail-image-panel {
+    order: 3;
     margin: 0;
+    margin-bottom: 0;
   }
-  
+
   .detail-thumbnails {
     flex-direction: column;
     overflow-x: visible;
@@ -724,6 +768,7 @@ a {
     max-height: 520px;
     padding-bottom: 0;
     padding-right: 0.5rem;
+    flex-shrink: 0;
   }
 }
 
@@ -1685,7 +1730,8 @@ a {
   }
 
   .detail-image-panel {
-    height: 340px;
+    height: auto;
+    aspect-ratio: 4 / 5;
     border-radius: 16px;
   }
 
@@ -1726,10 +1772,10 @@ a {
   }
 
   .size-btn {
-    min-width: 42px;
-    height: 42px;
-    font-size: 0.85rem;
-    border-radius: 10px;
+    min-width: 34px;
+    height: 34px;
+    font-size: 0.75rem;
+    border-radius: 8px;
   }
 
   .quantity-selector {
@@ -1737,15 +1783,15 @@ a {
   }
 
   .qty-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 0.9rem;
   }
 
   .qty-value {
-    width: 36px;
-    font-size: 1rem;
+    width: 32px;
+    font-size: 0.9rem;
   }
 
   /* --- Cart Page --- */
@@ -2094,7 +2140,8 @@ a {
 
   /* --- Product Detail --- */
   .detail-image-panel {
-    height: 280px;
+    height: auto;
+    aspect-ratio: 4 / 5;
     border-radius: 14px;
   }
 
