@@ -561,36 +561,38 @@ a {
 }
 
 .jersey-card-content {
-  padding: 1rem 1.25rem 1.25rem;
+  padding: 0.9rem 1.1rem 1.1rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
 .jersey-card-title {
-  font-size: 0.85rem;
-  font-weight: 400;
+  font-size: 0.8rem;
+  font-weight: 500;
   margin-bottom: 0.35rem;
   color: var(--text-primary);
-  line-height: 1.4;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .jersey-card-sizes {
   display: flex;
-  gap: 0.3rem;
-  margin-bottom: 0.5rem;
+  gap: 0.25rem;
+  margin-bottom: 0.45rem;
   flex-wrap: wrap;
 }
 
 .jersey-size-tag {
-  font-size: 0.65rem;
-  font-weight: 400;
-  padding: 0.1rem 0.3rem;
-  background-color: var(--bg-secondary);
+  font-size: 0.6rem;
+  font-weight: 500;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid var(--card-border);
   color: var(--text-secondary);
-  border-radius: 0;
+  border-radius: 4px;
+  background-color: transparent;
+  letter-spacing: 0.02em;
 }
 
 .jersey-card-footer {
@@ -602,11 +604,33 @@ a {
   border-top: none;
 }
 
+.jersey-card-price-container {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
 .jersey-card-price {
-  font-size: 0.9rem;
-  font-weight: 300;
+  font-size: 0.82rem;
+  font-weight: 600;
   color: var(--text-primary);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+}
+
+.jersey-card-mrp {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  letter-spacing: 0.01em;
+}
+
+.jersey-card-discount {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.01em;
 }
 
 /* --- Product Detail Page --- */
@@ -795,12 +819,31 @@ a {
   letter-spacing: -0.03em;
 }
 
+.detail-price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
 .detail-price {
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 1rem;
   letter-spacing: -0.01em;
+}
+
+.detail-mrp {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+.detail-discount {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
 }
 
 .detail-desc {
@@ -1676,7 +1719,7 @@ a {
   }
 
   .jersey-card-title {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     margin-bottom: 0.2rem;
     line-height: 1.25;
     display: -webkit-box;
@@ -1685,21 +1728,33 @@ a {
     overflow: hidden;
   }
 
-  /* Hide sizes on mobile cards for cleaner look */
   .jersey-card-sizes {
-    display: none;
+    display: flex;
+    gap: 0.2rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .jersey-size-tag {
+    font-size: 0.52rem;
+    padding: 0.05rem 0.2rem;
+    border-radius: 3px;
   }
 
   .jersey-card-footer {
-    padding-top: 0.5rem;
+    padding-top: 0.25rem;
     border-top: none;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: stretch;
   }
 
   .jersey-card-price {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
+  }
+
+  .jersey-card-mrp {
+    font-size: 0.66rem;
+  }
+
+  .jersey-card-discount {
+    font-size: 0.62rem;
   }
 
   /* Make the View Details button full-width and tap-friendly */
@@ -2125,11 +2180,29 @@ a {
   }
 
   .jersey-card-title {
-    font-size: 0.62rem;
+    font-size: 0.65rem;
+  }
+
+  .jersey-card-sizes {
+    gap: 0.15rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .jersey-size-tag {
+    font-size: 0.48rem;
+    padding: 0.02rem 0.15rem;
   }
 
   .jersey-card-price {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
+  }
+
+  .jersey-card-mrp {
+    font-size: 0.62rem;
+  }
+
+  .jersey-card-discount {
+    font-size: 0.58rem;
   }
 
   .jersey-card-footer .btn {
