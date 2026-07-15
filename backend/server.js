@@ -6,6 +6,8 @@ const connectDB = require('./config/db');
 const adminRoutes = require('./routes/adminRoutes');
 const jerseyRoutes = require('./routes/jerseyRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
+const webhookRoutes = require('./routes/webhookRoutes');
 
 // Initialize app
 const app = express();
@@ -27,6 +29,9 @@ app.get('/', (req, res) => {
 app.use('/api/admin', adminRoutes);
 app.use('/api/jerseys', jerseyRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/webhooks', webhookRoutes);
+
 
 // Error Handling Middleware (fallback)
 app.use((err, req, res, next) => {

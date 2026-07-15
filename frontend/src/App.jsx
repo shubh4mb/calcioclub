@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import AdminLogin from './pages/AdminLogin';
 import Admin from './pages/Admin';
+import TrackOrder from './pages/TrackOrder';
+import AboutUs from './pages/AboutUs';
+import ScrollToTop from './components/ScrollToTop';
 import Lenis from 'lenis';
 
 function App() {
@@ -133,6 +137,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="app-container">
         <Navbar
           theme={theme}
@@ -159,6 +164,11 @@ function App() {
                 />
               }
             />
+            <Route 
+              path="/track-order" 
+              element={<TrackOrder />} 
+            />
+            <Route path="/about" element={<AboutUs />} />
             <Route
               path="/admin/login"
               element={<AdminLogin showToast={showToast} />}
@@ -174,6 +184,8 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+
+        <Footer />
 
         {toast && (
           <div className="toast">

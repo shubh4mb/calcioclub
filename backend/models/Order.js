@@ -43,9 +43,24 @@ const orderSchema = new mongoose.Schema(
         required: [true, 'Please provide customer phone number'],
         trim: true,
       },
-      address: {
+      street: {
         type: String,
-        required: [true, 'Please provide delivery address'],
+        required: [true, 'Please provide street address'],
+        trim: true,
+      },
+      city: {
+        type: String,
+        required: [true, 'Please provide city'],
+        trim: true,
+      },
+      state: {
+        type: String,
+        required: [true, 'Please provide state'],
+        trim: true,
+      },
+      pincode: {
+        type: String,
+        required: [true, 'Please provide pincode'],
         trim: true,
       },
     },
@@ -54,10 +69,28 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    deliveryCharge: {
+      type: Number,
+      default: 0
+    },
     status: {
       type: String,
       enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
       default: 'Pending',
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['Pending', 'Paid', 'Failed'],
+      default: 'Pending',
+    },
+    razorpayOrderId: {
+      type: String,
+    },
+    razorpayPaymentId: {
+      type: String,
+    },
+    razorpaySignature: {
+      type: String,
     },
   },
   {

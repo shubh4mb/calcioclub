@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Trash2, ShoppingBag, ArrowRight, CheckCircle, Minus, Plus, Loader2 } from 'lucide-react';
 
@@ -7,11 +7,31 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
     name: '',
     email: '',
     phone: '',
-    address: ''
+    street: '',
+    city: '',
+    state: '',
+    pincode: ''
   });
+  const [settings, setSettings] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [createdOrder, setCreatedOrder] = useState(null);
+
+  useEffect(() => {
+    // Fetch delivery settings on mount
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          setSettings(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,15 +41,35 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
     }));
   };
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const getDeliveryCharge = () => {
+    if (!settings) return 0; // Default before settings load
+    const userCity = (formData.city || '').trim().toLowerCase();
+    const userState = (formData.state || '').trim().toLowerCase();
+    const baseCity = (settings.baseCity || '').trim().toLowerCase();
+    const baseState = (settings.baseState || '').trim().toLowerCase();
+
+    if (userCity === baseCity && userState === baseState) {
+      return settings.cityCharge;
+    } else if (userState === baseState) {
+      return settings.stateCharge;
+    } else {
+      return settings.otherCharge;
+    }
+  };
+
+  const calculateTotal = () => {
+    return calculateSubtotal() + getDeliveryCharge();
   };
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
     
     // Quick validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.address) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.street || !formData.city || !formData.state || !formData.pincode) {
       showToast('Please fill out all delivery details.', 'error');
       return;
     }
@@ -38,7 +78,15 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
       setIsSubmitting(true);
       
       const orderData = {
-        customerDetails: formData,
+        customerDetails: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          street: formData.street,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode
+        },
         items: cart.map((item) => ({
           jersey: item.jersey,
           jerseyName: item.jerseyName,
@@ -48,24 +96,75 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
         }))
       };
 
-      const response = await fetch('/api/orders', {
+      // 1. Create Razorpay order from backend
+      const response = await fetch('/api/orders/create-razorpay-order', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to place order');
+        throw new Error(data.message || 'Failed to initialize payment');
       }
 
-      setCreatedOrder(data);
-      setOrderSuccess(true);
-      clearCart(); // Clear local storage cart
-      showToast('Order booked successfully!');
+      // 2. Open Razorpay Checkout
+      const options = {
+        key: data.key, 
+        amount: data.amount,
+        currency: data.currency,
+        name: "CalcioClub",
+        description: "Jersey Order Payment",
+        order_id: data.orderId,
+        handler: async function (response) {
+          try {
+            // 3. Verify Payment and Create final order
+            const verifyResponse = await fetch('/api/orders/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...orderData,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                totalAmount: data.totalAmount,
+                deliveryCharge: data.deliveryCharge
+              })
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (!verifyResponse.ok) {
+              throw new Error(verifyData.message || 'Payment verification failed');
+            }
+
+            setCreatedOrder(verifyData);
+            setOrderSuccess(true);
+            clearCart();
+            showToast('Order placed successfully with payment!');
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.phone
+        },
+        theme: {
+          color: "#4f46e5" // Use our primary color
+        }
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      
+      rzp1.on('payment.failed', function (response){
+        showToast('Payment failed. Please try again.', 'error');
+      });
+
+      rzp1.open();
+
     } catch (err) {
       showToast(err.message || 'Error processing your order. Please try again.', 'error');
     } finally {
@@ -100,6 +199,9 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
             <strong>Customer:</strong> {createdOrder.customerDetails.name}
           </div>
           <div style={{ marginBottom: '0.5rem' }}>
+            <strong>Payment ID:</strong> <span style={{ fontFamily: 'monospace' }}>{createdOrder.razorpayPaymentId}</span>
+          </div>
+          <div style={{ marginBottom: '0.5rem' }}>
             <strong>Total Amount:</strong> <span style={{ color: 'var(--accent)', fontWeight: 800 }}>₹{createdOrder.totalAmount.toFixed(2)}</span>
           </div>
           <div>
@@ -131,6 +233,8 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
       </div>
     );
   }
+
+  const deliveryCharge = getDeliveryCharge();
 
   // 3. Normal Cart Grid
   return (
@@ -193,11 +297,15 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
           {/* Pricing summary */}
           <div className="checkout-row">
             <span>Items Subtotal</span>
-            <span>₹{calculateTotal().toFixed(2)}</span>
+            <span>₹{calculateSubtotal().toFixed(2)}</span>
           </div>
           <div className="checkout-row">
             <span>Shipping</span>
-            <span style={{ color: 'var(--success)', fontWeight: 600 }}>FREE</span>
+            {deliveryCharge === 0 ? (
+              <span style={{ color: 'var(--success)', fontWeight: 600 }}>FREE</span>
+            ) : (
+              <span>₹{deliveryCharge.toFixed(2)}</span>
+            )}
           </div>
           <div className="checkout-row total">
             <span>Total Amount</span>
@@ -219,50 +327,97 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
               />
             </div>
 
+            <div className="form-grid-row">
+              <div className="form-group">
+                <label htmlFor="phone">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="e.g. +1234567890"
+                  required
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="e.g. john@example.com"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
+              <label htmlFor="street">Street Address</label>
               <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="e.g. +1234567890"
+                type="text"
+                id="street"
+                name="street"
+                placeholder="e.g. 123 Main St, Apt 4B"
                 required
-                value={formData.phone}
+                value={formData.street}
                 onChange={handleInputChange}
               />
             </div>
 
+            <div className="form-grid-row">
+              <div className="form-group">
+                <label htmlFor="city">City</label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  placeholder="e.g. Mumbai"
+                  required
+                  value={formData.city}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="state">State</label>
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  placeholder="e.g. Maharashtra"
+                  required
+                  value={formData.state}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="pincode">Pincode</label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="e.g. john@example.com"
+                type="text"
+                id="pincode"
+                name="pincode"
+                placeholder="e.g. 400001"
                 required
-                value={formData.email}
+                value={formData.pincode}
                 onChange={handleInputChange}
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="address">Delivery Address</label>
-              <textarea
-                id="address"
-                name="address"
-                rows="3"
-                placeholder="e.g. Street, Apt, City, Country"
-                required
-                value={formData.address}
-                onChange={handleInputChange}
-                style={{ resize: 'vertical', fontFamily: 'var(--font-family)' }}
-              />
-            </div>
+            {settings && (
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem', marginTop: '-0.5rem' }}>
+                Note: Delivery is {settings.cityCharge === 0 ? 'FREE' : `₹${settings.cityCharge}`} within {settings.baseCity}, ₹{settings.stateCharge} within {settings.baseState}, and ₹{settings.otherCharge} for other states.
+              </div>
+            )}
 
             <button 
               type="submit" 
-              className="btn btn-primary" 
-              style={{ width: '100%', marginTop: '1.5rem', padding: '1rem' }}
+              className="btn btn-primary checkout-submit-btn" 
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -272,7 +427,7 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
                 </>
               ) : (
                 <>
-                  Book Order <ArrowRight size={18} />
+                  Pay & Book Order <ArrowRight size={18} />
                 </>
               )}
             </button>
