@@ -114,7 +114,7 @@ function Cart({ cart, updateQuantity, removeFromCart, clearCart, showToast }) {
         key: data.key, 
         amount: data.amount,
         currency: data.currency,
-        name: "CalcioClub",
+        name: "CalsioClub",
         description: "Jersey Order Payment",
         order_id: data.orderId,
         handler: async function (response) {
