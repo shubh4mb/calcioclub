@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, Instagram } from 'lucide-react';
+import logoImg from '../assets/logo.PNG';
 import './Footer.css';
 
 const Footer = () => {
@@ -8,7 +9,10 @@ const Footer = () => {
     <footer className="footer-container">
       <div className="footer-content">
         <div className="footer-brand">
-          <h2 className="footer-logo">CalcioClub</h2>
+          <div className="footer-logo-wrapper">
+            <img src={logoImg} alt="CalcioClub Logo" className="footer-logo-img" />
+            <h2 className="footer-logo">CalcioClub</h2>
+          </div>
           <p className="footer-tagline">Where Every Jersey Tells a Story.</p>
         </div>
         
@@ -43,23 +47,11 @@ const Footer = () => {
             </ul>
           </div>
           
-          <div className="footer-column">
-            <h3>Legal</h3>
-            <ul>
-              <li><Link to="#">Terms of Service</Link></li>
-              <li><Link to="#">Privacy Policy</Link></li>
-            </ul>
-          </div>
         </div>
       </div>
       
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} CalcioClub. All rights reserved.</p>
-        <div className="social-links">
-          <a href="#" aria-label="Instagram">IG</a>
-          <a href="#" aria-label="Twitter">TW</a>
-          <a href="#" aria-label="Facebook">FB</a>
-        </div>
       </div>
     </footer>
   );

@@ -131,30 +131,30 @@ function Navbar({ theme, toggleTheme, cartCount }) {
             </div>
             {cartCount > 0 && <span className="mobile-cart-badge">{cartCount}</span>}
           </Link>
+        </div>
 
-          <div className="mobile-drawer-footer">
-            <span className="mobile-footer-label">Theme Mode</span>
-            <button
-              onClick={() => {
-                toggleTheme();
-                setIsMenuOpen(false);
-              }}
-              className="theme-toggle-mobile"
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Moon size={18} />
-                  <span>Dark Mode</span>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Sun size={18} />
-                  <span>Light Mode</span>
-                </div>
-              )}
-            </button>
-          </div>
+        <div className="mobile-drawer-footer">
+          <span className="mobile-footer-label">Theme Mode</span>
+          <button
+            onClick={() => {
+              toggleTheme();
+              setIsMenuOpen(false);
+            }}
+            className="theme-toggle-mobile"
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Moon size={18} />
+                <span>Dark Mode</span>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Sun size={18} />
+                <span>Light Mode</span>
+              </div>
+            )}
+          </button>
         </div>
       </div>
 
