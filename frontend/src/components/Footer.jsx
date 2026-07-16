@@ -10,8 +10,8 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-brand">
           <div className="footer-logo-wrapper">
-            <img src={logoImg} alt="CalcioClub Logo" className="footer-logo-img" />
-            <h2 className="footer-logo">CalcioClub</h2>
+            <img src={logoImg} alt="CalsioClub Logo" className="footer-logo-img" />
+            <h2 className="footer-logo">CalsioClub</h2>
           </div>
           <p className="footer-tagline">Where Every Jersey Tells a Story.</p>
         </div>
@@ -51,7 +51,7 @@ const Footer = () => {
       </div>
       
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} CalcioClub. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} CalsioClub. All rights reserved.</p>
       </div>
     </footer>
   );
